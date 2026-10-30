@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>AI Tennis Coach</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#07111f;--panel:#101d2e;--panel2:#14243a;--line:#263a54;--text:#eef5ff;--muted:#9eb0c7;--blue:#48a5ff;--cyan:#53e0d0;--orange:#ffb35c;--red:#ff7272}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -20%,#183c64 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:#1b3049;color:var(--text);border-radius:12px;padding:10px 14px;font-weight:650}button.primary{background:linear-gradient(120deg,#1688f8,#26b8ce);border:0;color:#041322}button:disabled{opacity:.45;cursor:not-allowed}
+header{max-width:1240px;margin:auto;padding:22px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#1688f8,#43dfd0);display:grid;place-items:center;color:#041322;font-size:23px;font-weight:900}.brand h1{font-size:18px;letter-spacing:.08em;margin:0}.brand small{color:var(--muted);letter-spacing:.12em;font-size:10px}.status{font-size:12px;color:var(--cyan);border:1px solid #246b70;border-radius:30px;padding:6px 10px}
+main{max-width:1240px;margin:auto;padding:10px 22px 40px}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.85fr);gap:16px}.panel{background:linear-gradient(160deg,rgba(20,36,58,.96),rgba(12,25,42,.96));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 14px 45px #0003}.panel h2{font-size:15px;margin:0 0 12px}.muted{color:var(--muted)}.video-wrap{position:relative;background:#02070d;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center}.video-wrap video,.video-wrap canvas{position:absolute;width:100%;height:100%;inset:0;object-fit:contain}.video-wrap canvas{pointer-events:none}.empty{z-index:1;text-align:center;padding:20px;color:var(--muted)}.empty strong{display:block;color:var(--text);font-size:17px;margin:8px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.file-btn{display:inline-flex;align-items:center;gap:8px;background:#1b3049;border:1px solid var(--line);padding:10px 14px;border-radius:12px;font-weight:650;cursor:pointer}input[type=file]{display:none}input[type=range]{width:100%;accent-color:var(--blue)}.timeline{display:flex;gap:10px;align-items:center;margin-top:12px}.time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;min-width:76px}.side{display:grid;gap:16px;align-content:start}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{background:#0b1828;border:1px solid #20354e;border-radius:13px;padding:12px}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{font-size:23px;letter-spacing:-.03em}.metric small{font-size:11px;color:var(--muted)}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:4px 8px;color:var(--muted);font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.field{display:grid;gap:5px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}select,input[type=text]{background:#0b1828;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px;width:100%}.events{display:grid;gap:8px;max-height:220px;overflow:auto}.event{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;background:#0b1828;border:1px solid #20354e;border-radius:10px;font-size:12px}.event button{padding:5px 8px;font-size:11px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.progress{height:6px;background:#081321;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan))}.notice{padding:10px 12px;border-radius:11px;background:#102c3d;border:1px solid #24546b;color:#b9eaff;font-size:12px;margin-top:10px}.warning{background:#332719;border-color:#70502c;color:#ffdbad}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.section-title h2{margin:0}.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.chart{width:100%;height:130px;background:#0b1828;border-radius:12px}.footer{color:#6f849e;text-align:center;font-size:11px;padding:25px 10px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr}header{padding:17px 14px 10px}main{padding:8px 14px 30px}.panel{padding:13px}.brand h1{font-size:15px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">A</div><div><h1>AI TENNIS COACH</h1><small>VIDEO ANALYSIS STUDIO</small></div></div><div class="status" id="engineStatus">● AI engine: not loaded</div></header>
+<main>
+<div class="layout">
+<section class="panel">
+ <div class="section-title"><h2>01 / Video studio</h2><span class="pill">LOCAL PROCESSING</span></div>
+ <div class="video-wrap" id="videoWrap">
+  <div class="empty" id="empty"><div style="font-size:34px">🎾</div><strong>Dodaj nagranie treningu</strong>Wybierz film z iPhone'a lub komputera</div>
+  <video id="video" playsinline muted></video><canvas id="overlay"></canvas>
+ </div>
+ <div class="toolbar">
+  <label class="file-btn">＋ Import video<input id="fileInput" type="file" accept="video/*"></label>
+  <button id="playBtn" disabled>▶ Odtwórz</button><button id="analyzeBtn" class="primary" disabled>◎ Analizuj klatkę</button>
+  <button id="trackingBtn" disabled>▶ Śledź ruch</button>
+ </div>
+ <div class="timeline"><span class="time" id="currentTime">00:00.0</span><input id="seek" type="range" min="0" max="1000" value="0" disabled><span class="time" id="duration">00:00.0</span></div>
+ <div class="row" style="margin-top:10px"><span class="hint">Nakładka szkieletu człowieka · 33 landmarki</span><label class="hint"><input id="skeletonToggle" type="checkbox" checked> Pokaż szkielet</label></div>
+ <div class="progress" style="margin-top:10px"><i id="progressBar"></i></div>
+ <div id="engineNotice" class="notice">Załaduj nagranie, a następnie uruchom analizę. Przy pierwszym uruchomieniu model AI zostanie pobrany z internetu.</div>
+</section>
+<aside class="side">
+ <section class="panel"><div class="section-title"><h2>02 / Biomechanics</h2><span class="pill" id="poseBadge">WAITING</span></div>
+  <div class="metric-grid">
+   <div class="metric"><span>Łokieć — prawa strona</span><b id="elbow">—°</b><small>kąt stawu</small></div>
+   <div class="metric"><span>Bark — prawa strona</span><b id="shoulder">—°</b><small>kąt tułowia / ramienia</small></div>
+   <div class="metric"><span>Biodro — prawa strona</span><b id="hip">—°</b><small>kąt stawu</small></div>
+   <div class="metric"><span>Kolano — prawa strona</span><b id="knee">—°</b><small>kąt stawu</small></div>
+  </div>
+  <p class="hint" id="poseHint" style="margin-bottom:0">Wyniki pojawią się po wykryciu sylwetki. Wartości zależą od perspektywy kamery.</p>
+ </section>
+ <section class="panel"><div class="section-title"><h2>03 / Stroke tagging</h2><span class="pill">MANUAL + AI READY</span></div>
+  <div class="field"><label>Rodzaj uderzenia</label><select id="strokeType"><option>Forehand</option><option>Backhand</option><option>Serve</option><option>Volley</option><option>Slice</option><option>Drop shot</option><option>Other</option></select></div>
+  <div class="field"><label>Ocena / notatka</label><input id="strokeNote" type="text" placeholder="np. spóźniony kontakt, dobry balans"></div>
+  <button class="primary" id="addStroke" disabled style="width:100%">＋ Oznacz uderzenie w tej klatce</button>
+  <div class="row" style="margin:14px 0 8px"><b style="font-size:12px">Zdarzenia w nagraniu</b><span class="pill" id="eventCount">0</span></div>
+  <div class="events" id="events"><div class="hint">Brak oznaczonych uderzeń.</div></div>
+ </section>
+</aside>
+</div>
+<div class="bottom-grid">
+ <section class="panel"><div class="section-title"><h2>04 / Session overview</h2><button id="exportBtn" disabled>Eksportuj CSV</button></div>
+  <div class="metric-grid">
+   <div class="metric"><span>Oznaczone uderzenia</span><b id="totalStrokes">0</b></div>
+   <div class="metric"><span>Najczęstsze uderzenie</span><b id="topStroke" style="font-size:18px">—</b></div>
+  </div>
+  <canvas id="strokeChart" class="chart" width="600" height="150" style="margin-top:12px"></canvas>
+ </section>
+ <section class="panel"><div class="section-title"><h2>05 / Next modules</h2><span class="pill">ROADMAP</span></div>
+  <div class="event"><span>🟢 Pose estimation — szkielet 2D</span><span>ACTIVE</span></div>
+  <div class="event"><span>🟡 Automatyczne rozpoznawanie uderzeń</span><span>NEXT</span></div>
+  <div class="event"><span>🟡 Ball tracking i trajektoria</span><span>NEXT</span></div>
+  <div class="event"><span>⚪ 3D biomechanics i porównanie sesji</span><span>PLANNED</span></div>
+  <div class="notice warning">Prędkość piłki i topspin nie są jeszcze mierzone. Wymagają osobnego trackera piłki, kalibracji kortu i odpowiedniej jakości nagrania.</div>
+ </section>
+</div>
+<div class="footer">AI TENNIS COACH · MVP 0.1 · Analiza orientacyjna, nie diagnoza medyczna ani certyfikowany pomiar biomechaniczny.</div>
+</main>
+<script type="module">
+import {FilesetResolver, PoseLandmarker} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+const $=id=>document.getElementById(id), video=$('video'), canvas=$('overlay'), ctx=canvas.getContext('2d');
+let landmarker=null, raf=null, lastDetect=0, events=[], currentFile='', tracking=false, latestLandmarks=null;
+const connections=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[27,29],[29,31],[27,31],[24,26],[26,28],[28,30],[30,32],[28,32],[15,17],[15,19],[15,21],[16,18],[16,20],[16,22],[9,10],[0,1],[1,2],[2,3],[3,7],[0,4],[4,5],[5,6],[6,8]];
+function fmt(t){if(!isFinite(t))return'00:00.0';return `${String(Math.floor(t/60)).padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`}
+function angle(a,b,c){if(!a||!b||!c)return null;const v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y];let d=(v1[0]*v2[0]+v1[1]*v2[1])/(Math.hypot(...v1)*Math.hypot(...v2));return Math.round(Math.acos(Math.max(-1,Math.min(1,d)))*180/Math.PI)}
+function resize(){const r=$('videoWrap').getBoundingClientRect();const dpr=window.devicePixelRatio||1;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+new ResizeObserver(resize).observe($('videoWrap'));resize();
+$('fileInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;currentFile=f.name;video.src=URL.createObjectURL(f);video.load();$('empty').style.display='none';$('engineNotice').textContent='Nagranie gotowe. Kliknij „Analizuj klatkę”, aby uruchomić wykrywanie pozycji.';});
+video.addEventListener('loadedmetadata',()=>{$('seek').disabled=false;$('seek').value=0;$('duration').textContent=fmt(video.duration);['playBtn','analyzeBtn','trackingBtn','addStroke','exportBtn'].forEach(x=>$(x).disabled=false);resize();drawFrame();});
+video.addEventListener('timeupdate',()=>{$('currentTime').textContent=fmt(video.currentTime);if(!video.seeking)$('seek').value=video.duration?video.currentTime/video.duration*1000:0;});
+$('seek').addEventListener('input',()=>{video.currentTime=Number($('seek').value)/1000*video.duration;});
+$('playBtn').onclick=()=>{if(video.paused){video.play();$('playBtn').textContent='Ⅱ Pauza'}else{video.pause();$('playBtn').textContent='▶ Odtwórz'}};
+video.addEventListener('pause',()=>$('playBtn').textContent='▶ Odtwórz');
+function drawFrame(){if(!video.videoWidth)return;const w=$('videoWrap').clientWidth,h=$('videoWrap').clientHeight;ctx.clearRect(0,0,w,h);if(latestLandmarks&&$('skeletonToggle').checked){const sx=w/video.videoWidth,sy=h/video.videoHeight,scale=Math.min(sx,sy),ox=(w-video.videoWidth*scale)/2,oy=(h-video.videoHeight*scale)/2;ctx.lineWidth=2.2;ctx.strokeStyle='#53e0d0';ctx.fillStyle='#e9fbff';for(const [a,b] of connections){const p=latestLandmarks[a],q=latestLandmarks[b];if(p.visibility>.35&&q.visibility>.35){ctx.beginPath();ctx.moveTo(ox+p.x*video.videoWidth*scale,oy+p.y*video.videoHeight*scale);ctx.lineTo(ox+q.x*video.videoWidth*scale,oy+q.y*video.videoHeight*scale);ctx.stroke()}}for(const p of latestLandmarks){if(p.visibility>.35){ctx.beginPath();ctx.arc(ox+p.x*video.videoWidth*scale,oy+p.y*video.videoHeight*scale,3.2,0,Math.PI*2);ctx.fill()}}}}
+async function initAI(){if(landmarker)return true;$('engineStatus').textContent='● Loading AI…';$('engineNotice').textContent='Pobieranie silnika MediaPipe i modelu pose. Wymagane połączenie z internetem przy pierwszym uruchomieniu.';try{const vision=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');landmarker=await PoseLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',delegate:'GPU'},runningMode:'VIDEO',numPoses:1});$('engineStatus').textContent='● AI engine: ready';$('engineNotice').textContent='Silnik AI gotowy. Ustaw klatkę i analizuj albo włącz śledzenie ruchu.';return true}catch(err){$('engineStatus').textContent='● AI load error';$('engineNotice').textContent='Nie udało się załadować AI: '+err.message;return false}}
+function showMetrics(l){const a=(x,y,z)=>angle(l[x],l[y],l[z]);const vals={elbow:a(12,14,16),shoulder:a(14,12,24),hip:a(12,24,26),knee:a(24,26,28)};for(const [k,v] of Object.entries(vals))$(k).textContent=v===null?'—°':v+'°';$('poseBadge').textContent='POSE FOUND';$('poseHint').textContent='Kąty wyliczone z projekcji 2D. Lewa/prawa strona zależy od orientacji zawodnika względem kamery.'}
+async function detect(){if(!video.videoWidth)return;const ok=await initAI();if(!ok)return;try{const result=landmarker.detectForVideo(video,performance.now());if(result.landmarks?.length){latestLandmarks=result.landmarks[0];showMetrics(latestLandmarks);drawFrame()}else{$('poseBadge').textContent='NO POSE';$('poseHint').textContent='Nie wykryto sylwetki w tej klatce. Spróbuj innego ustawienia kamery.';latestLandmarks=null;drawFrame()}}catch(e){$('engineNotice').textContent='Błąd analizy klatki: '+e.message}}
+$('analyzeBtn').onclick=detect;
+$('trackingBtn').onclick=async()=>{if(tracking){tracking=false;cancelAnimationFrame(raf);$('trackingBtn').textContent='▶ Śledź ruch';video.pause();return}if(!await initAI())return;tracking=true;$('trackingBtn').textContent='Ⅱ Zatrzymaj śledzenie';video.play();const loop=now=>{if(!tracking)return;if(now-lastDetect>180){lastDetect=now;detect()}if(!video.paused&&!video.ended)raf=requestAnimationFrame(loop);else if(video.ended){tracking=false;$('trackingBtn').textContent='▶ Śledź ruch'}};raf=requestAnimationFrame(loop)};
+$('skeletonToggle').onchange=drawFrame;
+function renderEvents(){const el=$('events');$('eventCount').textContent=events.length;$('totalStrokes').textContent=events.length;el.innerHTML='';if(!events.length){el.innerHTML='<div class="hint">Brak oznaczonych uderzeń.</div>'}events.forEach((ev,i)=>{const row=document.createElement('div');row.className='event';const left=document.createElement('span');left.textContent=`${fmt(ev.time)} · ${ev.type}${ev.note?' — '+ev.note:''}`;const right=document.createElement('button');right.textContent='×';right.onclick=()=>{events.splice(i,1);renderEvents()};row.append(left,right);el.append(row)});const counts={};events.forEach(e=>counts[e.type]=(counts[e.type]||0)+1);const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];$('topStroke').textContent=top?top[0]:'—';drawChart(counts)}
+function drawChart(counts={}){const c=$('strokeChart'),g=c.getContext('2d'),w=c.width,h=c.height;g.clearRect(0,0,w,h);const entries=Object.entries(counts);if(!entries.length){g.fillStyle='#9eb0c7';g.font='15px sans-serif';g.fillText('Oznacz uderzenia, aby zobaczyć rozkład',18,75);return}const max=Math.max(...entries.map(x=>x[1]),1),barW=(w-40)/entries.length;entries.forEach(([name,n],i)=>{const bh=(h-48)*n/max,x=20+i*barW;g.fillStyle='#1688f8';g.fillRect(x,h-28-bh,Math.max(12,barW-12),bh);g.fillStyle='#eef5ff';g.font='12px sans-serif';g.fillText(String(n),x,h-34-bh);g.fillStyle='#9eb0c7';g.fillText(name.slice(0,10),x,h-10)})}
+$('addStroke').onclick=()=>{events.push({time:video.currentTime,type:$('strokeType').value,note:$('strokeNote').value.trim(),angles:{elbow:$('elbow').textContent,shoulder:$('shoulder').textContent,hip:$('hip').textContent,knee:$('knee').textContent}});$('strokeNote').value='';renderEvents()};
+$('exportBtn').onclick=()=>{const rows=[['video','time_seconds','stroke','note','elbow','shoulder','hip','knee'],...events.map(e=>[currentFile,e.time,e.type,e.note,e.angles.elbow,e.angles.shoulder,e.angles.hip,e.angles.knee])];const csv=rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='tennis-session.csv';a.click();URL.revokeObjectURL(a.href)};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
